@@ -67,3 +67,15 @@ class JobView(APIView):
             return Response(status=status.HTTP_200_OK)
 
         return Response(job_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CandidateView(APIView):
+    def post(self, request):
+        user=request.user
+        print(user.id)
+        candidate_serializer = candidate_serializer(user_id=user.id)
+        if candidate_serializer.is_valid():
+            candidate_serializer.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+        
