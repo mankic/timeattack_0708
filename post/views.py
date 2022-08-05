@@ -1,6 +1,9 @@
+from os import stat
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions, status
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 from .models import (
     JobPostSkillSet,
@@ -8,7 +11,7 @@ from .models import (
     JobPost,
     Company
 )
-from .serializers import JobPostSerializer
+from .serializers import ApplySerializer, JobPostSerializer
 from django.db.models.query_utils import Q
 
 
@@ -69,13 +72,22 @@ class JobView(APIView):
         return Response(job_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CandidateView(APIView):
+class ApplyView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+
     def post(self, request):
-        user=request.user
-        print(user.id)
-        candidate_serializer = candidate_serializer(user_id=user.id)
-        if candidate_serializer.is_valid():
-            candidate_serializer.save()
-            return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        user = request.user
+        print(request.auth)
+
+        if not request.auth:
+            return Response({"message": "인증 실패"}, status=status.HTTP_401_UNAUTHORIZED)
         
+        request.data['user'] = user.id
+        apply_serializer = ApplySerializer(data=request.data)
+
+        if apply_serializer.is_valid():
+            apply_serializer.save()
+            return Response({'message':'저장 완료'}, status=status.HTTP_200_OK)
+
+        return Response(apply_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

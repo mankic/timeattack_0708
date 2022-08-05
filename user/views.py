@@ -12,9 +12,6 @@ from django.contrib.auth import login, authenticate, logout
 
 from .models import User, UserLog, UserType
 
-from user.jwt_claim_serializer import SpartaTokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-
 class SignUpView(APIView):
 
     permission_classes = [permissions.AllowAny]
@@ -55,6 +52,3 @@ class SignInView(APIView):
         logout(request)
         return Response({"message": "logout success!!"}, status=status.HTTP_200_OK)
 
-
-class SpartaTokenObtainPairView(TokenObtainPairView):
-    serializer_class = SpartaTokenObtainPairSerializer

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import (
+    Apply,
     SkillSet,
     JobPostSkillSet,
     JobType,
@@ -77,3 +78,10 @@ class JobPostSkillSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobPostSkillSet
         fields = ('id', 'skill_set', 'job_post')
+
+
+class ApplySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Apply
+        fields = ('user', 'job_post')
+        # fields = '__all__'

@@ -1,5 +1,7 @@
 from django.db import models
 
+from user.models import User
+
 
 class SkillSet(models.Model):
     name = models.CharField(max_length=128)
@@ -54,3 +56,15 @@ class BusinessArea(models.Model):
 
     class Meta:
         db_table = 'business_areas'
+
+
+class Apply(models.Model):
+    user = models.ForeignKey(User, verbose_name='지원자', on_delete=models.CASCADE)
+    job_post = models.ForeignKey(JobPost, verbose_name='채용공고', on_delete=models.CASCADE)
+    created_at = models.DateTimeField('지원날짜', auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s apply - {self.id}"
+
+    class Meta:
+        db_table = 'applies'
